@@ -6,8 +6,9 @@
   <title>API Interactor Tool</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
-    input, button { padding: 10px; font-size: 14px; }
+    input, button, textarea, select { padding: 10px; font-size: 14px; }
     pre { background: #f0f0f0; padding: 10px; border-radius: 5px; }
+    textarea { width: 100%; height: 100px; }
   </style>
 </head>
 <body>
@@ -15,6 +16,18 @@
   
   <label for="apiUrl">API Endpoint:</label>
   <input type="text" id="apiUrl" value="" style="width: 100%;" />
+
+  <label for="httpMethod">HTTP Method:</label>
+  <select id="httpMethod">
+    <option value="GET">GET</option>
+    <option value="POST">POST</option>
+    <option value="PUT">PUT</option>
+    <option value="DELETE">DELETE</option>
+    <option value="PATCH">PATCH</option>
+  </select>
+
+  <label for="requestBody">Request Body:</label>
+  <textarea id="requestBody" placeholder='{"key": "value"}'></textarea>
 
   <button id="sendRequest" style="margin-top: 10px;">Send Request</button>
 
@@ -35,8 +48,20 @@
 
       document.getElementById('sendRequest').addEventListener('click', function() {
         const url = document.getElementById('apiUrl').value;
-        
-        fetch(url)
+        const method = document.getElementById('httpMethod').value;
+        const body = document.getElementById('requestBody').value;
+
+        const options = {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: (body && (method === 'POST' || method === 'PUT' || method === 'PATCH')) 
+                ? JSON.stringify(JSON.parse(body)) 
+                : null
+        };
+
+        fetch(url, options)
           .then(response => response.json())
           .then(data => {
             document.getElementById('responseOutput').textContent = JSON.stringify(data, null, 2);
