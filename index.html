@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Interactor Tool</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    input, button { padding: 10px; font-size: 14px; }
+    pre { background: #f0f0f0; padding: 10px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h2>API Interactor</h2>
+  
+  <label for="apiUrl">API Endpoint:</label>
+  <input type="text" id="apiUrl" value="" style="width: 100%;" />
+
+  <button id="sendRequest" style="margin-top: 10px;">Send Request</button>
+
+  <h3>Response:</h3>
+  <pre id="responseOutput">Response will appear here...</pre>
+
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const apiUrl = getQueryParam('url');
+      if (apiUrl) {
+        document.getElementById('apiUrl').value = apiUrl;
+      }
+
+      document.getElementById('sendRequest').addEventListener('click', function() {
+        const url = document.getElementById('apiUrl').value;
+        
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('responseOutput').textContent = JSON.stringify(data, null, 2);
+          })
+          .catch(error => {
+            document.getElementById('responseOutput').textContent = 'Error: ' + error;
+          });
+      });
+    });
+  </script>
+</body>
+</html>
